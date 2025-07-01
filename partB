@@ -1,0 +1,374 @@
+#1 Write a Python program using Pandas to perform the following operations using the Titanic dataset:
+#Dataset link : titanic.csv
+#i. Read the Titanic dataset from a CSV file (titanic.csv) into a Pandas DataFrame and display the first few rows.
+
+import pandas as pd
+df = pd.read_csv("titanic.csv")
+#print("First few rows of the dataset:")
+df.head()
+
+#ii. Filter the dataset to select only the rows where the passenger's age is greater than 30, and display the filtered results.
+
+df[df["Age"] > 30]
+
+#iii. Replace missing values in the age column with a default value (e.g., 30) and display the updated DataFrame.
+
+df['Age'] = df['Age'].fillna(30)
+df
+
+#iv Remove any rows containing missing values from the dataset and display the cleaned DataFrame
+
+df.dropna()
+#print("\nDataFrame after removing rows with any missing values:")
+
+#10 Write a Python program using pandas to perform the following operations using the Titanic dataset:
+#Dataset link : titanic.csv
+import pandas as pd
+df = pd.read_csv("titanic.csv")
+#i. Determine and display the maximum and minimum values in the age column.
+print("Max :",df['Age'].max()," Min:",df['Age'].min())
+
+ #ii. Create a new DataFrame with passenger IDs and ticket discounts, and perform a left join between this DataFrame and the Titanic dataset. Display the merged DataFrame.
+
+discounts_data = {
+    "PassengerId": [1, 2, 3, 4, 5],
+    "Ticket_Discount": [5.0, 10.0, 15.0, 0.0, 20.0]
+}
+discounts = pd.DataFrame(discounts_data)
+
+merged = pd.merge(df, discounts, on="PassengerId", how="left")
+#print("\nMerged DataFrame (with Ticket Discounts):")
+merged
+
+#iii. Check for duplicate rows in the dataset, remove them, and display the number of duplicates found along with the cleaned DataFrame
+
+print("Number of duplicate rows found:", df.duplicated().sum())
+df = df.drop_duplicates()
+#print("DataFrame after removing duplicates:")
+df
+
+
+#iv. Save the cleaned Titanic dataset (after removing duplicates and handling missing values) to an Excel file (titanic_cleaned.xlsx).
+
+df['Age']=df['Age'].fillna(30)
+df = df.drop_duplicates()
+df = df.dropna()
+df.to_excel("titanic_cleaned.xlsx", index=False)
+print("Cleaned Titanic dataset saved as 'titanic_cleaned.xlsx'.")
+
+
+#2.  Write a Python program using Pandas to perform the following operations using the  
+#Employee dataset:Data link: Employee.csv
+import pandas as pd
+df = pd.read_csv("Employee.csv")
+
+#i. Rank employees based on their salary within their department
+df["SalaryRank"] = df.groupby("Department")["Salary"].rank(ascending=False)
+df
+
+#ii. Which JoiningYear has the most employees still in the company?
+
+a=df[df['LeftCompany']==0]['JoiningYear'].mode()[0]
+print(a)
+
+#iii. Find employees who are above 50 years old and still working
+
+a=df[(df['Age']>50) & (df['LeftCompany']==0)]
+a[['EmployeeID','Age','LeftCompany']]
+
+
+#iv. Compute average salary increase trend (assuming salary grows by 5% annually since joining).
+
+df["YearsWorked"] = 2025 - df["JoiningYear"]
+df["EstStartSalary"] = df["Salary"] / (1.05 ** df["YearsWorked"])
+df["SalaryIncrease"] = df["Salary"] - df["EstStartSalary"]
+avg_trend = df["SalaryIncrease"].mean()
+print(f"Estimated Average Salary Increase (5% annual growth): {avg_trend:.2f}")
+df[['EmployeeID', 'EstStartSalary', 'Salary', 'SalaryIncrease']]
+
+
+#iv. Compute average salary increase trend (assuming salary grows by 5% annually since joining).
+
+df["YearsWorked"] = 2025 - df["JoiningYear"]
+df["EstStartSalary"] = df["Salary"] / (1.05 ** df["YearsWorked"])
+df["SalaryIncrease"] = df["Salary"] - df["EstStartSalary"]
+avg_trend = df["SalaryIncrease"].mean()
+print(f"Estimated Average Salary Increase (5% annual growth): {avg_trend:.2f}")
+df[['EmployeeID', 'EstStartSalary', 'Salary', 'SalaryIncrease']]
+
+
+#iv. Compute average salary increase trend (assuming salary grows by 5% annually since joining).
+
+df['Years_worked']=2025-df['JoiningYear']
+df['salaryestm']=df['Salary']*(1.05**df['Years_worked'])
+df.groupby('JoiningYear')['salaryestm'].mean()
+
+
+#v. Create bins of Age and find average salary for each bin.
+
+df['AgeGroup'] = pd.cut(df['Age'], bins=[20, 30, 40, 50, 60])
+df.groupby('AgeGroup', observed=True)['Salary'].mean()
+
+
+#9. Write a Python program using pandas to perform the following operations
+#using theEmployee dataset: Data link: Employee.csv
+import pandas as pd
+df = pd.read_csv("Employee.csv")
+
+#i. Create a pivot table showing total number of employees by JoiningYear and Department.
+
+#print("Pivot table of employee count by JoiningYear and Department:")
+
+df.pivot_table(index="JoiningYear", columns="Department", values="EmployeeID", aggfunc="count")
+
+
+#ii. Identify if remote work is more common in a specific department.
+
+remote= df.groupby('Department')['RemoteWork'].mean()
+print("Department with most remote workers: ",remote.idxmax())
+remote
+
+
+#iii. Find standard deviation of salaries for each department
+
+#print("Standard deviation of salaries by department:")
+
+df.groupby("Department")["Salary"].std()
+
+#iv. Plot a histogram of Performance Score for male employees.
+
+import matplotlib.pyplot as plt
+male_perf = df[df["Gender"] == "Male"]["PerformanceScore"]
+plt.hist(male_perf)
+plt.title("Performance Score Distribution (Male Employees)")
+plt.xlabel("Performance Score")
+plt.ylabel("Number of Employees")
+plt.show()
+
+#v. How does Work Hours PerWeek affect the chance of leaving the company? Find top 5 highest earning employees in each department.
+
+# Effect of Work Hours Per Week on Leaving
+df.groupby("WorkHoursPerWeek")["LeftCompany"].mean()
+
+
+# Top 5 highest earning employees in each department
+
+df.groupby('Department')['Salary'].nlargest(5)
+
+
+#3. Write a Python program using Pandas,to perform the following operations using the  
+#Chiptole dataset:Dataset link: chipotle.csv
+
+import pandas as pd
+
+df = pd.read_csv("chipotle.csv")
+#i. Determine the number of unique orders using the `order_id` column.
+df['order_id'].nunique()
+#print("Unique Orders:", unique_orders)
+
+
+#ii. Calculate the average revenue per order.Find out how many different items are sold (unique values in `item_name`).List the top 5 items by total quantity sold.
+
+# ii. Average revenue per order
+df['item_price'] = df['item_price'].str.replace('$', '').astype(float)
+order = df.groupby('order_id')['item_price'].sum().mean()
+print("Average Revenue per Order:", order)
+
+# ii.a Number of different items sold
+unique_items = df['item_name'].nunique()
+print("Different Items Sold:", unique_items)
+
+# ii.b Top 5 items by quantity sold
+top_items = df.groupby('item_name')['quantity'].sum().nlargest(5)
+print("Top 5 Items by Quantity Sold:")
+print(top_items)
+
+#iii. Count the number of unique values in the `choice_description` column.
+
+df['choice_description'].nunique()
+#print("Unique Choice Descriptions:", unique_choices)
+
+#iv. Identify the order with the highest total bill amount.
+
+#df['item_price'] = df['item_price'].str.replace('$', '').astype(float)
+
+df.groupby('order_id')['item_price'].sum().nlargest(1)
+
+
+#8 Write a Python program using Pandas to perform the following operations using the  Chiptole dataset:
+#Dataset link: chipotle.csv
+import pandas as pd
+df = pd.read_csv("chipotle.csv")
+
+#i. Find all items that have inconsistent pricing (same `item_name` but different `item_price` values).
+#df['item_price'] = df['item_price'].str.replace('$', '').astype(float)
+#df['unit_price'] = df['item_price'] / df['quantity']
+p=df.groupby('item_name')['item_price'].nunique()
+i=p[p>1]
+i
+
+
+#ii. Calculate the average price of an item.
+df['item_price'] = df['item_price'].str.replace('$', '').astype(float)
+df['unit_price'] = df['item_price'] / df['quantity']
+print(f"Average price per item: {df['unit_price'].mean():.2f}")
+
+
+#iii. List all unique item prices and show the items associated with each price.
+
+#df['item_price'] = df['item_price'].str.replace('$', '').astype(float)
+#df['unit_price'] = df['item_price'] / df['quantity']
+df.groupby('item_price')['item_name'].unique()
+
+
+#iv. Display all orders that included *Canned Soda*.
+
+df[df['item_name']=='Canned Soda']
+
+#4. Write a Python program to perform the following operations using the Data Visualization with Matplotlib
+#Data Link: Student_Dataset.csv
+import pandas as pd
+import matplotlib.pyplot as plt
+df = pd.read_csv("Student.csv")
+#i. Plot the average Project Score for each Department.
+df.groupby('Department')['Project_Score'].mean().plot(kind='bar', title='Avg Project Score by Dept')
+plt.xlabel('Department')
+plt.ylabel('Average Project Score')
+plt.show()
+
+
+#ii. Plot the GPA trend for the first 50 students (x-axis: Student_ID, y-axis: GPA).
+
+df.head(50).plot(x='Student_ID', y='GPA', title='GPA Trend (First 50 Students)', marker='o')
+plt.xlabel('Student ID')
+plt.ylabel('GPA')
+plt.show()
+
+
+#iii. Show the proportion of students in each Year
+
+df['Year'].value_counts().plot(kind='pie', autopct='%1.1f%%', title='Proportion of Students per Year')
+plt.ylabel('')
+plt.show()
+
+
+#iv. Plot a histogram of Attendance (%) with 10 bins.
+
+df['Attendance (%)'].plot(kind='hist', bins=10, title='Attendance Distribution',edgecolor='black')
+plt.xlabel('Attendance (%)')
+plt.show()
+
+
+#v. Show a scatter plot between GPA and Project Score
+
+df.plot(kind='scatter', x='GPA', y='Project_Score', title='GPA vs Project Score')
+plt.show()
+
+
+#5. Write a Python program to perform the following operations using the concept Data Cleaning with Pandas
+#Data Link: Student_Dataset.csv
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv("Student.csv")
+#i. Print the number of missing values in each column.
+print("Missing values:\n", df.isna().sum())
+
+
+#ii. Drop any duplicate records and reset the index.
+
+df.drop_duplicates().reset_index(drop=True)
+
+
+#iii. Find rows where GPA is less than 0 or greater than 10.
+
+invalid_gpa = df[(df['GPA'] < 0) | (df['GPA'] > 10)]
+print("\nInvalid GPA rows:\n", invalid_gpa)
+
+
+#iv. Replace such outliers with NaN and then fill all NaN in GPA with the mean of valid GPA values.
+import numpy as np
+df.loc[(df['GPA'] < 0) | (df['GPA'] > 10), 'GPA'] = np.nan
+df['GPA'] = df['GPA'].fillna(df['GPA'].mean())
+df
+
+
+#6.Write a Python program to perform the following operations using the concept Data Cleaning with Pandas
+#Data Link: Student_Dataset.csv
+import pandas as pd
+
+df = pd.read_csv("Student.csv")
+#i. Convert Department, Internship_Completed, and Year columns to category data type.
+df['Department'] = df['Department'].astype('category')
+df['Internship_Completed'] = df['Internship_Completed'].astype('category')
+df['Year'] = df['Year'].astype('category')
+df
+
+#ii. Create a new column called Performance_Category using this logic:
+#a. GPA ≥ 8.5 → "Excellent"
+#b. GPA ≥ 7.0 → "Good"
+#c. GPA ≥ 5.0 → "Average"
+#d. Else → "Poor"
+
+import numpy as np
+
+cond = [df['GPA'] >= 8.5, df['GPA'] >= 7.0, df['GPA'] >= 5.0]
+choice = ['Excellent', 'Good', 'Average']
+df['Performance_Category'] = np.select(cond, choice, default='Poor')
+df
+
+
+#iii. Display the average GPA and Project Score for each Department.
+
+df.groupby('Department', observed=True)[['GPA', 'Project_Score']].mean()
+#print("Average GPA and Project Score by Department:\n", avg)
+
+
+#iv. Count the number of students by Internship completion status and by Year.
+
+df.groupby('Year',observed=True)['Internship_Completed'].value_counts()
+#print("\nStudent Count by Internship Completion and Year:\n", count)
+
+
+#7. Write a Python program to perform the following operations using the Data Visualization with Seaborn.
+#Data Link: Student_Dataset.csv 
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("Student.csv")
+#i.Show GPA distribution across Departments.
+sns.boxplot(x='Department', y='GPA', data=df)
+plt.title("GPA Distribution Across Departments")
+plt.show()
+#Visualize Project Score distribution based on Internship_Completed.
+sns.violinplot(x='Internship_Completed', y='Project_Score', data=df)
+plt.title("Project Score vs Internship Completion")
+plt.show()
+
+
+#ii. Show the number of students in each Performance_Category.
+
+cond = [df['GPA'] >= 8.5, df['GPA'] >= 7.0, df['GPA'] >= 5.0]
+choice = ['Excellent', 'Good', 'Average']
+df['Performance_Category'] = np.select(cond, choice, default='Poor')
+sns.countplot(x='Performance_Category', data=df)
+plt.title("Student Count per Performance Category")
+plt.show()
+
+
+#iii. Display a heatmap of the correlation between GPA, Attendance (%), and Project Score.
+import numpy as np
+
+corr = df[['GPA', 'Attendance (%)', 'Project_Score']].corr()
+sns.heatmap(corr, annot=True, cmap='coolwarm')
+plt.title("Correlation Heatmap")
+plt.show()
+
+
+#iv. Generate a pairplot to analyze relationships between GPA,Attendance, and Project Score, color-coded by Year.
+
+sns.pairplot(df, vars=['GPA', 'Attendance (%)', 'Project_Score'], hue='Year')
+plt.show()
+
+
