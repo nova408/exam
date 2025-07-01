@@ -1,0 +1,297 @@
+#part A
+#1a Write a Python program that prints numbers from 1 to 50, but skips multiples of 5 using the continue statement.
+for i in range(1, 51):
+    if i % 5 == 0:
+        continue
+    print(i)
+
+#1b Write a Python program to generate the first N Fibonacci numbers using both recursion and iteration. Compare their time complexity
+#Using Recursion:
+def fib(n):
+    if n <= 1:
+        return n
+    return fib(n-1) + fib(n-2)
+
+N = int(input("Enter N: "))
+for i in range(N):
+    print(fib(i))
+
+#Using Iteration:
+
+def fib(n):
+    a, b = 0, 1
+    for _ in range(n):
+        print(a)
+        a, b = b, a + b
+
+N = int(input("Enter N: "))
+fib(N)
+
+
+#Time Complexity
+#Recursive	Exponential: O(2^n) — very slow for large N
+#Iterative	Linear: O(n) — fast and efficient ✅
+
+#2a Write a Python decorator that prints "Before calling function" and "After calling function" around the execution of any function.
+
+def deco(func):
+    def wrap():
+        print("Before calling function")
+        func()
+        print("After calling function")
+    return wrap
+
+@deco
+def hello():
+    print("Hello!")
+
+hello()
+
+#2b Write a decorator that converts the output of a function to uppercase.
+
+def deco(func):
+    def wrap():
+        return func().upper()
+    return wrap
+
+@deco
+def greet():
+    return "good morning"
+
+print(greet())
+
+#3a Write a Python program demonstrating encapsulation using a class BankAccount with private attributes __balance and methods to deposit and withdraw money
+
+class BankAccount:
+    def __init__(self):
+        self.__balance = 0
+
+    def deposit(self, amt):
+        if amt > 0:
+            self.__balance += amt
+
+    def withdraw(self, amt):
+        if 0 < amt <= self.__balance:
+            self.__balance -= amt
+
+    def get_balance(self):
+        return self.__balance
+
+acc = BankAccount()
+d = int(input("Enter amount to deposit: "))
+acc.deposit(d)
+w = int(input("Enter amount to withdraw: "))
+acc.withdraw(w)
+print("Balance:", acc.get_balance())
+
+#3b Write a Python program that demonstrates abstraction using an interface (abstract class) for different payment methods like CreditCard, PayPal, and Bitcoin.
+
+from abc import ABC, abstractmethod
+
+class Payment(ABC):
+    @abstractmethod
+    def pay(self, amt):
+        pass
+
+class CreditCard(Payment):
+    def pay(self, amt):
+        print("Paid",amt,"using Credit Card.")
+
+class PayPal(Payment):
+    def pay(self, amt):
+        print("Paid",amt,"using PayPal.")
+
+class Bitcoin(Payment):
+    def pay(self, amt):
+        print("Paid",amt,"using Bitcoin.")
+
+method = input("Enter payment method (card/paypal/bitcoin): ").lower()
+amt = input("Enter amount to pay: ")
+
+if method == "card":
+    p = CreditCard()
+    p.pay(amt)
+elif method == "paypal":
+    p = PayPal()
+    p.pay(amt)
+elif method == "bitcoin":
+    p = Bitcoin()
+    p.pay(amt)
+else:
+    print("Invalid method")
+    exit()
+
+
+#4a Write a Python program to search for and extract all phone numbers from a given block of text. Assume phone numbers can be in formats like (123) 456-7890 or 123-456-7890.
+
+import re
+
+text = input("Enter text with phone numbers: ")
+phones = re.findall(r'\(?\d{3}\)?[-\s]?\d{3}-\d{4}', text)
+print("Found phone numbers:", phones)
+
+#4b Write a Python program that demonstrates the use of try-except-finally blocks. For example, attempt to open a file, process its content, and ensure that the file is closed regardless of whether an exception occurs
+
+fname = input("Enter file name: ")
+
+try:
+    f = open(fname, "r")
+    print("File content:\n", f.read())
+except FileNotFoundError:
+    print("File not found!")
+finally:
+    try:
+        f.close()
+        #print("File closed.")
+    except:
+        pass
+
+#5a  Write a Python program that reads a CSV file named data.csv and prints its content row by  Row.
+
+import csv
+
+f1=open("data.csv")
+res=csv.reader(f1)
+for i in res:
+    print(i)
+
+#5b Write a Python program that writes a list of dictionaries to a CSV file with headers
+
+import csv
+
+fname = input("Enter CSV filename to write to: ")
+data = []
+
+n = int(input("Enter number of people: "))
+for _ in range(n):
+    name = input("Enter name: ")
+    age = input("Enter age: ")
+    data.append({"Name": name, "Age": age})
+
+with open(fname, 'w', newline='') as f:
+    w = csv.DictWriter(f, fieldnames=["Name", "Age"])
+    w.writeheader()
+    w.writerows(data)
+#print("Data written to", fname)
+
+#6a Write a Python program using Numpy , to generate a 3×3 matrix with random values between 0 and 1.
+import numpy as np
+
+#print("3x3 matrix with random values:")
+print(np.random.rand(3, 3))
+
+#6b Write a Python program using Numpy, to create a diagonal matrix with specified values along the diagonal.
+
+import numpy as np
+
+vals = eval(input("Enter diagonal values: "))
+print(np.diag(vals))
+
+#7a  Write a Python program that stops execution if it encounters a negative number in a list using the break statement.
+
+nums = eval(input("Enter a list of numbers: "))
+for n in nums:
+    if n < 0:
+        print("Negative number found:", n)
+        break
+    print(n)
+
+#7b Write a Python program to count the occurrences of each character in a given string using a dictionary.
+
+text = input("Enter a string: ")
+count = {}
+for c in text:
+    count[c] = count.get(c, 0) + 1
+print(count)
+
+#8a  Create a class Laptop with private attributes for price and model, and public methods to access and modify them safely.
+
+class Laptop:
+    def __init__(self, model, price):
+        self.__model = model
+        self.__price = price
+
+    def get_model(self):
+        return self.__model
+
+    def set_model(self, m):
+        self.__model = m
+
+    def get_price(self):
+        return self.__price
+
+    def set_price(self, p):
+        if p > 0:
+            self.__price = p
+
+model = input("Enter laptop model: ")
+price = float(input("Enter laptop price: "))
+
+l = Laptop(model, price)
+print("Model:", l.get_model())
+print("Price:", l.get_price())
+
+l1=Laptop("Acer",35000)
+l1.set_model("Lenovo")
+l1.set_price(40000)
+
+print("Present price and model:",l1.get_model(),l1.get_price())
+
+
+#8b Create an abstract class Shape with an abstract method calculate_area(), then implement Circle and Square classes.
+
+from abc import ABC, abstractmethod
+import math
+
+class Shape(ABC):
+    @abstractmethod
+    def calculate_area(self):
+        pass
+
+class Circle(Shape):
+    def __init__(self, r):
+        self.r = r
+    def calculate_area(self):
+        return math.pi * self.r * self.r
+
+class Square(Shape):
+    def __init__(self, s):
+        self.s = s
+    def calculate_area(self):
+        return self.s * self.s
+
+choice = input("Enter shape (circle/square): ")
+val = eval(input("Enter dimension: "))
+obj = Circle(val) if choice == "circle" else Square(val)
+print("Area:", obj.calculate_area())
+
+
+#9a Write a Python program that reads an image or binary file in binary mode and prints its first  100 bytes
+
+f = open(input("Enter file name: "), "rb")
+print(f.read(100))
+f.close()
+
+
+#9b Write a Python program that opens an image file in binary mode and writes it to a new file.
+
+src = input("Enter source file name: ")
+dst = input("Enter destination file name: ")
+
+with open(src, "rb") as f1, open(dst, "wb") as f2:
+    f2.write(f1.read())
+
+#print("Copied.")
+
+#10a Write a Python program to extract all even numbers from a NumPy array.
+
+import numpy as np
+arr = np.array(eval(input("Enter array: ")))
+print("Even:", arr[arr % 2 == 0])
+
+#10b Write a Python program to replace all negative numbers in a NumPy array with zero
+
+import numpy as np
+arr = np.array(eval(input("Enter array: ")))
+arr[arr < 0] = 0
+print("Modified:", arr)
